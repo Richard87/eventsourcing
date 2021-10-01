@@ -26,3 +26,5 @@ services:
     EventSauce\EventSourcing\MessageRepository:
         factory: ['@App\Infrastructure\MessageRepositoryFactory', "create"]
 
+    EventSauce\EventSourcing\Serialization\PayloadSerializer: '@App\Infrastructure\PayloadSerializer'
+    EventSauce\EventSourcing\Serialization\ConstructingMessageSerializer: ~

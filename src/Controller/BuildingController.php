@@ -39,14 +39,14 @@ class BuildingController extends AbstractController
 
     #[Route("/building/{uuid}", name: "building")]
     public function details(string $uuid): Response {
-        $building = $this->buildingRepository->retrieve($uuid);
+        $building = $this->buildingRepository->retrieve(Uuid::fromString($uuid));
         dump($building);
         return $this->render('building/details.html.twig', ['uuid' => $uuid, "building" => $building]);
     }
 
     #[Route("/building/{uuid}/checkin", name: "checkin")]
     public function checkin(string $uuid, Request $request): Response {
-        $building = $this->buildingRepository->retrieve($uuid);
+        $building = $this->buildingRepository->retrieve(Uuid::fromString($uuid));
 
         $building->checkInUser($request->request->getAlnum("username"));
         $this->buildingRepository->persist($building);
@@ -55,7 +55,7 @@ class BuildingController extends AbstractController
     }
     #[Route("/building/{uuid}/checkout", name: "checkout")]
     public function checkout(string $uuid, Request $request): Response {
-        $building = $this->buildingRepository->retrieve($uuid);
+        $building = $this->buildingRepository->retrieve(Uuid::fromString($uuid));
 
         $building->checkOutUser($request->request->getAlnum("username"));
         $this->buildingRepository->persist($building);

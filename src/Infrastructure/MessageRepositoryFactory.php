@@ -7,11 +7,12 @@ use EventSauce\EventSourcing\MessageRepository;
 use EventSauce\MessageRepository\DoctrineV2MessageRepository\DoctrineUuidV4MessageRepository;
 use EventSauce\MessageRepository\TableSchema\DefaultTableSchema;
 use EventSauce\UuidEncoding\BinaryUuidEncoder;
+use EventSauce\EventSourcing\Serialization\ConstructingMessageSerializer;
 
 class MessageRepositoryFactory
 {
     public function __construct(
-        private MessageSerializer $messageSerializer,
+        private ConstructingMessageSerializer $messageSerializer,
         private Connection $connection
     )
     {
