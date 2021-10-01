@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello BuildingController!{% endblock %}
+
+{% block body %}
+
+    <h1>Register Building</h1>
+
+    <form action="{{ path("register") }}" method="post">
+        <input title="Building name" type="text" name="name" placeholder="Building name">
+
+        <button>Register</button>
+    </form>
+
+
+{% endblock %}
