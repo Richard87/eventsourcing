@@ -20,5 +20,14 @@
         <button>CheckOut</button>
     </form>
 
+    <ul>
+        {% for user in building.users %}
+            <li>
+            {% if user.checkedIn %}<a href="{{ path('checkout', {'uuid': building.uuid, 'username': user.name}) }}">Checkout {{ user.name }}</a>
+            {% else %}<a href="{{ path('checkin', {'uuid': building.uuid, 'username': user.name}) }}">Checkin {{ user.name }}</a>
+            {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
 {% endblock %}
 

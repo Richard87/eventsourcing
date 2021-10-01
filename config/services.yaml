@@ -20,11 +20,20 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
             - '../src/Tests/'
+    _instanceof:
+        EventSauce\EventSourcing\MessageConsumer:
+            tags: ['app.message_consumer']
 
+            
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     EventSauce\EventSourcing\MessageRepository:
         factory: ['@App\Infrastructure\MessageRepositoryFactory', "create"]
+
+    App\Infrastructure\MessageDispatchFactory:
+        arguments: [!tagged_iterator app.message_consumer]
+    EventSauce\EventSourcing\MessageDispatcher:
+        factory: ['@App\Infrastructure\MessageDispatchFactory', "create"]
 
     EventSauce\EventSourcing\Serialization\PayloadSerializer: '@App\Infrastructure\PayloadSerializer'
     EventSauce\EventSourcing\Serialization\ConstructingMessageSerializer: ~

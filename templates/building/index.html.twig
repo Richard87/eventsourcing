@@ -12,5 +12,7 @@
         <button>Register</button>
     </form>
 
-
+    <ul>
+        {% for building in buildings %}<li><a href="{{ path('building', {'uuid': building.uuid}) }}">{{ building.name }}</a> </li>{% endfor %}
+    </ul>
 {% endblock %}

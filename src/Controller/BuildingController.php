@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Domain\Agregate\Building;
 use App\Domain\Repository\BuildingRepository;
 use App\Infrastructure\Uuid;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +14,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class BuildingController extends AbstractController
 {
     public function __construct(
-        private BuildingRepository $buildingRepository
+        private BuildingRepository $buildingRepository,
+        private EntityManagerInterface $em,
     )
     {
     }
@@ -22,8 +24,12 @@ class BuildingController extends AbstractController
     #[Route('/', name: 'index')]
     public function index(): Response
     {
+        /** @var list<\App\Domain\ReadModels\Building> $buildings */
+        $buildings = $this->em->getRepository(\App\Domain\ReadModels\Building::class)->findAll();
+
+
         return $this->render('building/index.html.twig', [
-            'controller_name' => 'BuildingController',
+            'buildings' => $buildings
         ]);
     }
 
@@ -39,8 +45,7 @@ class BuildingController extends AbstractController
 
     #[Route("/building/{uuid}", name: "building")]
     public function details(string $uuid): Response {
-        $building = $this->buildingRepository->retrieve(Uuid::fromString($uuid));
-        dump($building);
+        $building = $this->em->getRepository(\App\Domain\ReadModels\Building::class)->findOneBy(["uuid" => $uuid]);
         return $this->render('building/details.html.twig', ['uuid' => $uuid, "building" => $building]);
     }
 
@@ -48,7 +53,7 @@ class BuildingController extends AbstractController
     public function checkin(string $uuid, Request $request): Response {
         $building = $this->buildingRepository->retrieve(Uuid::fromString($uuid));
 
-        $building->checkInUser($request->request->getAlnum("username"));
+        $building->checkInUser($request->get("username"));
         $this->buildingRepository->persist($building);
 
         return $this->redirectToRoute("building", ["uuid" => $building->aggregateRootId()]);
@@ -57,7 +62,7 @@ class BuildingController extends AbstractController
     public function checkout(string $uuid, Request $request): Response {
         $building = $this->buildingRepository->retrieve(Uuid::fromString($uuid));
 
-        $building->checkOutUser($request->request->getAlnum("username"));
+        $building->checkOutUser($request->get("username"));
         $this->buildingRepository->persist($building);
 
         return $this->redirectToRoute("building", ["uuid" => $building->aggregateRootId()]);
