@@ -9,7 +9,7 @@ use EventSauce\EventSourcing\AggregateRootRepository;
 
 class CheckOutUserCommand implements AggregateCommand
 {
-    public function __construct(private string $uuid, private string $username)
+    public function __construct(public string $uuid, public string $username)
     {
     }
 

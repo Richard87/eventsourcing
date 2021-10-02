@@ -7,7 +7,6 @@ framework:
             command.bus:
                 middleware:
                     - doctrine_transaction
-            query.bus: ~
             default.bus: ~
 
         transports:
