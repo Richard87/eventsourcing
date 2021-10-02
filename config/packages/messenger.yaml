@@ -19,4 +19,3 @@ framework:
             # Route your messages to the transports
             # 'App\Message\YourMessage': async
             App\Infrastructure\AggregateCommand: sync
-            App\Infrastructure\DomainQuery: sync
