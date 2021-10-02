@@ -3,19 +3,25 @@
 namespace App\Controller;
 
 use App\Domain\Agregate\Building;
+use App\Domain\Command\CheckInUserCommand;
+use App\Domain\Command\CheckOutUserCommand;
+use App\Domain\Command\RegisterNewBuildingCommand;
 use App\Domain\Repository\BuildingRepository;
+use App\Infrastructure\CommandBusHandler;
 use App\Infrastructure\Uuid;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Messenger\Stamp\HandledStamp;
 use Symfony\Component\Routing\Annotation\Route;
 
 class BuildingController extends AbstractController
 {
     public function __construct(
-        private BuildingRepository $buildingRepository,
         private EntityManagerInterface $em,
+        private CommandBusHandler      $commandBus,
     )
     {
     }
@@ -36,11 +42,11 @@ class BuildingController extends AbstractController
     #[Route("/register-new-building", name: "register")]
     public function register(Request $request): Response {
         $name     = $request->get("name");
-        $building = Building::new($name);
 
-        $this->buildingRepository->persist($building);
+        /** @var Uuid $uuid */
+        $uuid = $this->commandBus->execute(new RegisterNewBuildingCommand($name));
 
-        return $this->redirectToRoute("building", ["uuid" => $building->aggregateRootId()]);
+        return $this->redirectToRoute("building", ["uuid" => $uuid->toString()]);
     }
 
     #[Route("/building/{uuid}", name: "building")]
@@ -51,20 +57,14 @@ class BuildingController extends AbstractController
 
     #[Route("/building/{uuid}/checkin", name: "checkin")]
     public function checkin(string $uuid, Request $request): Response {
-        $building = $this->buildingRepository->retrieve(Uuid::fromString($uuid));
+        $this->commandBus->execute(new CheckInUserCommand($uuid, $request->get("username")));
 
-        $building->checkInUser($request->get("username"));
-        $this->buildingRepository->persist($building);
-
-        return $this->redirectToRoute("building", ["uuid" => $building->aggregateRootId()]);
+        return $this->redirectToRoute("building", ["uuid" => $uuid]);
     }
     #[Route("/building/{uuid}/checkout", name: "checkout")]
     public function checkout(string $uuid, Request $request): Response {
-        $building = $this->buildingRepository->retrieve(Uuid::fromString($uuid));
+        $this->commandBus->execute(new CheckOutUserCommand($uuid, $request->get("username")));
 
-        $building->checkOutUser($request->get("username"));
-        $this->buildingRepository->persist($building);
-
-        return $this->redirectToRoute("building", ["uuid" => $building->aggregateRootId()]);
+        return $this->redirectToRoute("building", ["uuid" => $uuid]);
     }
 }
