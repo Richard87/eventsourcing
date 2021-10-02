@@ -7,6 +7,7 @@ framework:
             command.bus:
                 middleware:
                     - doctrine_transaction
+            query.bus: ~
             default.bus: ~
 
         transports:
@@ -19,3 +20,4 @@ framework:
             # Route your messages to the transports
             # 'App\Message\YourMessage': async
             App\Infrastructure\AggregateCommand: sync
+            App\Infrastructure\DomainQuery: sync

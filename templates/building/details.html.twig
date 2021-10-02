@@ -5,16 +5,17 @@
 {% block body %}
 
     <h1>Welcome to {{ building.name }}</h1>
+    <a href="{{ path('index') }}">Tilbake</a>
 
     <h2>Check In: </h2>
-    <form action="{{ path('checkin', {uuid: uuid}) }}" method="post">
+    <form action="{{ path('checkin', {uuid: building.uuid}) }}" method="post">
         <input type="text" name="username" placeholder="Enter your username to checkin" required="required"/>
 
         <button>CheckIn</button>
     </form>
 
     <h2>Check Out: </h2>
-    <form action="{{ path('checkout', {uuid: uuid}) }}" method="post">
+    <form action="{{ path('checkout', {uuid: building.uuid}) }}" method="post">
         <input type="text" name="username" placeholder="Enter your username to checkout" required="required"/>
 
         <button>CheckOut</button>

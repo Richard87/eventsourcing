@@ -6,8 +6,12 @@ use App\Domain\Agregate\Building;
 use App\Domain\Command\CheckInUserCommand;
 use App\Domain\Command\CheckOutUserCommand;
 use App\Domain\Command\RegisterNewBuildingCommand;
+use App\Domain\DTO\BuildingsList;
+use App\Domain\Query\BuildingDetailsDomainQuery;
+use App\Domain\Query\ListBuildingsQuery;
 use App\Domain\Repository\BuildingRepository;
 use App\Infrastructure\CommandBusHandler;
+use App\Infrastructure\QueryBusHandler;
 use App\Infrastructure\Uuid;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,8 +24,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class BuildingController extends AbstractController
 {
     public function __construct(
-        private EntityManagerInterface $em,
         private CommandBusHandler      $commandBus,
+        private QueryBusHandler $queryBus,
     )
     {
     }
@@ -30,8 +34,8 @@ class BuildingController extends AbstractController
     #[Route('/', name: 'index')]
     public function index(): Response
     {
-        /** @var list<\App\Domain\ReadModels\Building> $buildings */
-        $buildings = $this->em->getRepository(\App\Domain\ReadModels\Building::class)->findAll();
+        /** @var BuildingsList $buildings */
+        $buildings = $this->queryBus->query(new ListBuildingsQuery());
 
 
         return $this->render('building/index.html.twig', [
@@ -51,8 +55,10 @@ class BuildingController extends AbstractController
 
     #[Route("/building/{uuid}", name: "building")]
     public function details(string $uuid): Response {
-        $building = $this->em->getRepository(\App\Domain\ReadModels\Building::class)->findOneBy(["uuid" => $uuid]);
-        return $this->render('building/details.html.twig', ['uuid' => $uuid, "building" => $building]);
+
+        $details = $this->queryBus->query(new BuildingDetailsDomainQuery($uuid));
+
+        return $this->render('building/details.html.twig', ['building' => $details]);
     }
 
     #[Route("/building/{uuid}/checkin", name: "checkin")]

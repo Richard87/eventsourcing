@@ -13,6 +13,6 @@
     </form>
 
     <ul>
-        {% for building in buildings %}<li><a href="{{ path('building', {'uuid': building.uuid}) }}">{{ building.name }}</a> </li>{% endfor %}
+        {% for uuid,name in buildings.buildings %}<li><a href="{{ path('building', {'uuid': uuid}) }}">{{ name }}</a> </li>{% endfor %}
     </ul>
 {% endblock %}

@@ -18,11 +18,11 @@ class CheckOutUserCommand implements AggregateCommand
         return Building::class;
     }
 
-    public function __invoke(AggregateRootRepository $aggregateRootRepository)
+    public function __invoke(AggregateRootRepository $repo)
     {
         /** @var Building $building */
-        $building = $aggregateRootRepository->retrieve(Uuid::fromString($this->uuid));
+        $building = $repo->retrieve(Uuid::fromString($this->uuid));
         $building->checkOutUser($this->username);
-        $aggregateRootRepository->persist($building);
+        $repo->persist($building);
     }
 }

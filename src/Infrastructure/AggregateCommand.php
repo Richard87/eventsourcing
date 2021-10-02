@@ -8,5 +8,5 @@ interface AggregateCommand
 {
     public function getClassname(): string;
 
-    public function __invoke(AggregateRootRepository $aggregateRootRepository);
+    public function __invoke(AggregateRootRepository $repo);
 }
