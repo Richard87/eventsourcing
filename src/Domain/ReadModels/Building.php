@@ -20,7 +20,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[ApiResource(
     collectionOperations: [
         "get" => ["normalization_context" => ["groups" => ["list"]]],
-        "register" => ["status" => 202, "messenger" => "input", "input" => RegisterNewBuildingCommand::class, "output" => AggregateRootId::class, "method" => "POST", "path" => "/buildings/register_new_building"],
+        "register" => ["status" => 200, "messenger" => "input", "input" => RegisterNewBuildingCommand::class, "output" => AggregateRootId::class, "method" => "POST", "path" => "/buildings/register_new_building"],
         "check_in" => ["status" => 202, "messenger" => "input", "input" => CheckInUserCommand::class, "output" => false, "method" => "POST", "path" => "/buildings/check_in_user"],
         "check_out" => ["status" => 202, "messenger" => "input", "input" => CheckOutUserCommand::class, "output" => false, "method" => "POST", "path" => "/buildings/check_out_user"],
     ],

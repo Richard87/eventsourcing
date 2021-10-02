@@ -2,6 +2,7 @@
 import React from "react"
 import {useMutation, useQuery} from "react-query";
 import {jsonFetch} from "./app";
+import {Link} from "react-router-dom";
 
 export default function Index() {
     const {isLoading, isError, data, refetch} = useQuery("/api/buildings")
@@ -25,7 +26,7 @@ export default function Index() {
         </form>
         {isLoading && <span>Loading...</span>}
         <ul>
-            {data && data.map(b => <li key={b.uuid}>{b.name}</li>)}
+            {data && data.map(b => <li key={b.uuid}><Link to={`/building/${b.uuid}`}>{b.name}</Link></li>)}
         </ul>
 
     </>

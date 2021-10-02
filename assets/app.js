@@ -11,6 +11,9 @@ import * as ReactDOM from "react-dom";
 import React from "react"
 import Index from "./Index";
 import {QueryClient, QueryClientProvider} from "react-query";
+import {BrowserRouter} from "react-router-dom";
+import {Route, Switch} from "react-router";
+import Details from "./Details";
 
 export const jsonFetch = async (url, json) => {
     let response = await fetch(url, {
@@ -19,10 +22,15 @@ export const jsonFetch = async (url, json) => {
         headers: {accept: "application/json", "content-type": "application/json"}
     });
 
-    const body = await response.json()
+    const body = response.status !== 202 ? await response.json() : {}
 
     if (response.ok)
         return body
+
+    if (response.status === 404) {
+        console.error(body)
+        return
+    }
 
     alert(response.statusText)
     throw new Error(response.statusText, body)
@@ -42,7 +50,14 @@ const queryClient = new QueryClient({
 })
 
 function App(){
-    return <QueryClientProvider client={queryClient}><Index/></QueryClientProvider>
+    return <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+            <Switch>
+                <Route exact path={"/building/:uuid"}><Details/></Route>
+                <Route><Index/></Route>
+            </Switch>
+        </BrowserRouter>
+    </QueryClientProvider>
 }
 
 ReactDOM.render(<App />, document.getElementById('root'));
