@@ -3,24 +3,13 @@
 namespace App\Domain\Command;
 
 use App\Domain\Agregate\Building;
-use App\Infrastructure\SelfExecutingAggregateCommand;
-use App\Infrastructure\Uuid;
-use EventSauce\EventSourcing\AggregateRootRepository;
+use App\Infrastructure\AggregateExecutedCommand;
+use App\Infrastructure\HandledByAggregate;
 
-class CheckOutUserCommand implements SelfExecutingAggregateCommand
+#[HandledByAggregate(Building::class, method: "checkOutUser")]
+class CheckOutUserCommand implements AggregateExecutedCommand
 {
     public function __construct(public string $uuid, public string $username)
     {
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function __invoke(callable $getRepo)
-    {
-        $repo = $getRepo(Building::class);
-        $building = $repo->retrieve(Uuid::fromString($this->uuid));
-        $building->checkOutUser($this->username);
-        $repo->persist($building);
     }
 }

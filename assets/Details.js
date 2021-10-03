@@ -1,4 +1,3 @@
-
 import React from "react"
 import {useMutation, useQuery} from "react-query";
 import {jsonFetch} from "./app";
@@ -13,25 +12,30 @@ export default function Details() {
     if (isError) return <span>ERROR!!!</span>
     if (isLoading) return <span>Loading...</span>
 
-    const handleCheckin = async event => {
+    const handleSubmit = async event => {
         event.preventDefault()
 
         const fd = new FormData(event.target)
         event.target.reset()
         let user = Object.fromEntries(fd.entries());
-        return checkIn.mutateAsync({...user, uuid},{onSuccess: refetch })
+        return checkIn.mutateAsync({...user, uuid}, {onSuccess: refetch})
     }
 
+    const handleCheckin = async username => {
+        return checkIn.mutateAsync({username, uuid}, {onSuccess: refetch})
+    }
+
+
     const handleCheckout = async username => {
-        return checkOut.mutateAsync({username, uuid},{onSuccess: refetch })
+        return checkOut.mutateAsync({username, uuid}, {onSuccess: refetch})
     }
 
     return <>
-        <h1>Welcome to { building.name }</h1>
+        <h1>Welcome to {building.name}</h1>
         <Link to="/">Tilbake</Link>
 
         <h2>Check In: </h2>
-        <form  onSubmit={handleCheckin}>
+        <form onSubmit={handleSubmit}>
             <input type="text" name="username" placeholder="Enter your username to checkin" required="required"/>
 
             <button disabled={checkIn.isLoading}>CheckIn</button>
@@ -40,7 +44,9 @@ export default function Details() {
             {building.users.map(u => (
                 <li key={u.name}>
                     <span style={{textDecoration: u.checkedOut ? "underline" : "strikethrough"}}>{u.name}</span>
-                    {u.checkedIn && <button onClick={() => handleCheckout(u.name)}>Checkout</button>}
+                    {u.checkedIn && <button disabled={checkOut.isLoading} onClick={() => handleCheckout(u.name)}>Checkout</button>}
+                    {!u.checkedIn && <button  disabled={checkIn.isLoading} onClick={() => handleCheckin(u.name)}>Checkin</button>}
+
                 </li>
             ))}
         </ul>

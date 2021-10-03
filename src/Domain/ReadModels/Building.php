@@ -41,7 +41,8 @@ class Building
         #[ApiProperty(identifier: true), Groups(["list", "details"])]
         public string $uuid,
 
-        #[Column, Groups(["list", "details"])] public string $name
+        #[Column, Groups(["list", "details"])]
+        public string $name
     )
     {
         $this->users = new ArrayCollection();

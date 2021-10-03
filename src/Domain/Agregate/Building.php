@@ -3,6 +3,7 @@
 namespace App\Domain\Agregate;
 
 use App\Domain\Command\CheckInUserCommand;
+use App\Domain\Command\CheckOutUserCommand;
 use App\Domain\Command\RegisterNewBuildingCommand;
 use App\Domain\DomainEvent\NewBuildingWasRegistered;
 use App\Domain\DomainEvent\UserCheckedIn;
@@ -47,12 +48,12 @@ class Building implements AggregateRoot
         $this->users[$event->username] = true;
     }
 
-    public function checkOutUser(string $username): void
+    public function checkOutUser(CheckOutUserCommand $command): void
     {
-        if (!$this->isCheckedIn($username))
+        if (!$this->isCheckedIn($command->username))
             throw new \DomainException("Can't check out user that is not checked in!");
 
-        $this->recordThat(new UserCheckedOut($username));
+        $this->recordThat(new UserCheckedOut($command->username));
     }
     protected function applyUserCheckedOut(UserCheckedOut $event): void {
         $this->users[$event->username] = false;
