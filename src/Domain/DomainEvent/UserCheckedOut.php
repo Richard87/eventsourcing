@@ -2,7 +2,9 @@
 
 namespace App\Domain\DomainEvent;
 
-class UserCheckedOut
+use App\Infrastructure\SimpleConstructorNormalizer;
+
+class UserCheckedOut implements SimpleConstructorNormalizer
 {
     public function __construct(public string $username)
     {

@@ -2,7 +2,9 @@
 
 namespace App\Domain\DomainEvent;
 
-class UserCheckedIn
+use App\Infrastructure\SimpleConstructorNormalizer;
+
+class UserCheckedIn implements SimpleConstructorNormalizer
 {
     public function __construct(public string $username)
     {

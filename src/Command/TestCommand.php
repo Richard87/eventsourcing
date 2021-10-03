@@ -3,11 +3,15 @@
 namespace App\Command;
 
 use App\Domain\Agregate\Building;
+use App\Domain\Command\CheckInUserCommand;
+use App\Domain\Command\CheckOutUserCommand;
 use App\Domain\Repository\BuildingRepository;
+use App\Infrastructure\Uuid;
 use EventSauce\EventSourcing\EventDispatcher;
 use EventSauce\EventSourcing\MessageDispatcher;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -24,12 +28,13 @@ class TestCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $building = Building::new("Slottet");
-        $building->checkInUser("Richard");
-        $building->checkOutUser("Richard");
-        $this->buildingRepository->persist($building);
+        $building = $this->buildingRepository->retrieve(Uuid::fromString("46c02081-8810-4fb2-9b50-57deb44bff56"));
 
-        $building = $this->buildingRepository->retrieve($building->aggregateRootId());
+        foreach (range(1,5000) as $i) {
+            $building->checkOutUser(new CheckOutUserCommand("46c02081-8810-4fb2-9b50-57deb44bff56", "Richard"));
+            $building->checkInUser(new CheckInUserCommand("46c02081-8810-4fb2-9b50-57deb44bff56", "Richard"));
+        }
+        $this->buildingRepository->persist($building);
 
         $output->writeln($building->name);
         return Command::SUCCESS;

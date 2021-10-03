@@ -4,10 +4,9 @@ framework:
         # failure_transport: failed
         default_bus: default.bus
         buses:
-            command.bus:
+            default.bus:
                 middleware:
                     - doctrine_transaction
-            default.bus: ~
 
         transports:
             # https://symfony.com/doc/current/messenger.html#transport-configuration

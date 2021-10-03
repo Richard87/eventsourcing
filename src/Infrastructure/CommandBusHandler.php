@@ -13,20 +13,22 @@ use EventSauce\EventSourcing\MessageRepository;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class CommandBusHandler implements MessageHandlerInterface
 {
     use HandleTrait;
 
     public function __construct(
-        MessageBusInterface $commandBus,
+        MessageBusInterface $messageBus,
         private MessageRepository $messageRepository,
         private MessageDispatcher $dispatcher,
+        private Stopwatch $stopwatch,
         private ?ClassNameInflector $classNameInflector = null,
         private ?MessageDecorator $decorator = null,
     )
     {
-        $this->messageBus = $commandBus;
+        $this->messageBus = $messageBus;
     }
 
     /**
@@ -98,7 +100,7 @@ class CommandBusHandler implements MessageHandlerInterface
     private function getRepo(string $className): AggregateRootRepository
     {
         return new EventSourcedAggregateRootRepository(
-            $className, $this->messageRepository, $this->dispatcher, $this->decorator, $this->classNameInflector
+            $className, $this->messageRepository, $this->dispatcher, $this->decorator, $this->classNameInflector,$this->stopwatch
         );
     }
 }

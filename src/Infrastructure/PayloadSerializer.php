@@ -6,6 +6,7 @@ namespace App\Infrastructure;
 use EventSauce\EventSourcing\Serialization\PayloadSerializer as Serializer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class PayloadSerializer implements Serializer
 {
@@ -13,6 +14,7 @@ class PayloadSerializer implements Serializer
     public function __construct(
         private NormalizerInterface   $normalizer,
         private DenormalizerInterface $denormalizer,
+        private Stopwatch $stopwatch,
     )
     {
     }
@@ -24,6 +26,15 @@ class PayloadSerializer implements Serializer
 
     public function unserializePayload(string $className, array $payload): object
     {
-        return $this->denormalizer->denormalize($payload, $className);
+        $this->stopwatch->start("unserialize payload", "serializer");
+
+        if (in_array(SimpleConstructorNormalizer::class, class_implements($className))) {
+            $message = new $className(...$payload);
+        } else {
+            $message = $this->denormalizer->denormalize($payload, $className);
+        }
+
+        $this->stopwatch->stop("unserialize payload");
+        return $message;
     }
 }
