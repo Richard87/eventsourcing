@@ -7,7 +7,10 @@ use EventSauce\EventSourcing\AggregateRootRepository;
 interface SelfExecutingAggregateCommand extends AggregateCommand
 {
 
-    public function getClassname(): string;
-
-    public function __invoke(AggregateRootRepository $repo);
+    /**
+     * @template T
+     * @param callable(T):AggregateRootRepository<T> $getRepo
+     * @return mixed
+     */
+    public function __invoke(callable $getRepo);
 }

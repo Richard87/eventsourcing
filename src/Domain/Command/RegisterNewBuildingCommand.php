@@ -3,24 +3,15 @@
 namespace App\Domain\Command;
 
 use App\Domain\Agregate\Building;
+use App\Infrastructure\AggregateExecutedCommand;
+use App\Infrastructure\HandledByAggregate;
 use App\Infrastructure\SelfExecutingAggregateCommand;
 use EventSauce\EventSourcing\AggregateRootRepository;
 
-class RegisterNewBuildingCommand implements SelfExecutingAggregateCommand
+#[HandledByAggregate(Building::class, constructor: "new")]
+class RegisterNewBuildingCommand implements AggregateExecutedCommand
 {
     public function __construct(public string $name)
     {
-    }
-
-    public function getClassname(): string
-    {
-        return Building::class;
-    }
-
-    public function __invoke(AggregateRootRepository $repo): \EventSauce\EventSourcing\AggregateRootId
-    {
-        $building = Building::new($this->name);
-        $repo->persist($building);
-        return $building->aggregateRootId();
     }
 }

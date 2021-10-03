@@ -2,6 +2,8 @@
 
 namespace App\Domain\Agregate;
 
+use App\Domain\Command\CheckInUserCommand;
+use App\Domain\Command\RegisterNewBuildingCommand;
 use App\Domain\DomainEvent\NewBuildingWasRegistered;
 use App\Domain\DomainEvent\UserCheckedIn;
 use App\Domain\DomainEvent\UserCheckedOut;
@@ -18,11 +20,11 @@ class Building implements AggregateRoot
     /** @var array<string, bool> */
     public array $users = [];
 
-    public static function new(string $name) : self
+    public static function new(RegisterNewBuildingCommand $command) : self
     {
         $self = new self(\App\Infrastructure\Uuid::create());
 
-        $self->recordThat(new NewBuildingWasRegistered($name));
+        $self->recordThat(new NewBuildingWasRegistered($command->name));
 
         return $self;
     }
@@ -32,12 +34,12 @@ class Building implements AggregateRoot
         $this->name = $event->name;
     }
 
-    public function checkInUser(string $username): void
+    public function checkInUser(CheckInUserCommand $command): void
     {
-        if ($this->isCheckedIn($username))
+        if ($this->isCheckedIn($command->username))
             throw new \DomainException("Can't check in user that is already checked in!");
 
-        $this->recordThat(new UserCheckedIn($username));
+        $this->recordThat(new UserCheckedIn($command->username));
     }
 
     protected function applyUserCheckedIn(UserCheckedIn $event) {

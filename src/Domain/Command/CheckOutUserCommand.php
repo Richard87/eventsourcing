@@ -13,14 +13,12 @@ class CheckOutUserCommand implements SelfExecutingAggregateCommand
     {
     }
 
-    public function getClassname(): string
+    /**
+     * @inheritDoc
+     */
+    public function __invoke(callable $getRepo)
     {
-        return Building::class;
-    }
-
-    public function __invoke(AggregateRootRepository $repo)
-    {
-        /** @var Building $building */
+        $repo = $getRepo(Building::class);
         $building = $repo->retrieve(Uuid::fromString($this->uuid));
         $building->checkOutUser($this->username);
         $repo->persist($building);
