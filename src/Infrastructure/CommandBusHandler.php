@@ -40,7 +40,7 @@ class CommandBusHandler implements MessageHandlerInterface
     /**
      * @internal
      */
-    public function __invoke(AggregateCommand $command)
+    public function __invoke(SelfExecutingAggregateCommand $command)
     {
         $className  = $command->getClassname();
         $repository = $this->getRepo($className);

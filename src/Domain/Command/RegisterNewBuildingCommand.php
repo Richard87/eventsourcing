@@ -3,10 +3,10 @@
 namespace App\Domain\Command;
 
 use App\Domain\Agregate\Building;
-use App\Infrastructure\AggregateCommand;
+use App\Infrastructure\SelfExecutingAggregateCommand;
 use EventSauce\EventSourcing\AggregateRootRepository;
 
-class RegisterNewBuildingCommand implements AggregateCommand
+class RegisterNewBuildingCommand implements SelfExecutingAggregateCommand
 {
     public function __construct(public string $name)
     {
