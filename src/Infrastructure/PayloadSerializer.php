@@ -28,7 +28,9 @@ class PayloadSerializer implements Serializer
     {
         $this->stopwatch->start("unserialize payload", "serializer");
 
-        if (in_array(SimpleConstructorNormalizer::class, class_implements($className))) {
+        $isSimpleConstructor = in_array(SimpleConstructorNormalizer::class, class_implements($className));
+
+        if ($isSimpleConstructor) {
             $message = new $className(...$payload);
         } else {
             $message = $this->denormalizer->denormalize($payload, $className);
