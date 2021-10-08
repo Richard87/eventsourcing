@@ -47,25 +47,4 @@ class Building
     {
         $this->users = new ArrayCollection();
     }
-
-    public function checkIn(string $name) {
-        foreach ($this->users as $user) {
-            if ($user->name === $name) {
-                $user->checkedIn = true;
-                return;
-            }
-        }
-
-        new User($this, $name, true);
-    }
-
-    public function checkOut(string $name) {
-
-        foreach ($this->users as $user) {
-            if ($user->name === $name) {
-                $user->checkedIn = false;
-                return;
-            }
-        }
-    }
 }

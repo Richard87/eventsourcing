@@ -2,7 +2,6 @@
 
 namespace App\Domain\ReadModels;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
 use Doctrine\ORM\Mapping\Column;
 use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
@@ -15,7 +14,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 #[Entity, Table("building_users")]
 class User
 {
-    #[Column, Id, GeneratedValue, ApiProperty(identifier: false)]
+    #[Column, Id, GeneratedValue]
     public int $id;
 
     public function __construct(
@@ -23,7 +22,7 @@ class User
         public Building $building,
 
         #[Column]
-        #[Groups("details"), ApiProperty(identifier: true)]
+        #[Groups("details")]
         public string $name,
 
         #[Column]

@@ -73,13 +73,14 @@ class CommandBusHandler implements MessageHandlerInterface
 
         $repo = $this->getRepo($attribute->className);
         if ($method) {
-            if (!property_exists($command, "uuid")) {
-                throw new \DomainException("When method is used, the command must have a property 'uuid' in '$commandClass'!");
+            $identifier = $attribute->identifier;
+            if (!property_exists($command, $identifier)) {
+                throw new \DomainException("When method is used, the command must have a property '$identifier' in '$commandClass'!");
             }
             if (!method_exists($className, $method)) {
                 throw new \DomainException("When method is used, the aggregate ('$className') must have a method '$method' in '$commandClass'!");
             }
-            $uuid      = Uuid::fromString($command->uuid);
+            $uuid      = Uuid::fromString($command->$identifier);
             $aggregate = $repo->retrieve($uuid);
 
             $result = $aggregate->$method($command);
