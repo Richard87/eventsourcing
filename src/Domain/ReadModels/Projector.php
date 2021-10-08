@@ -36,6 +36,8 @@ class Projector implements MessageConsumer
             $user ??= new User($building,$event->username, true);
             $user->checkedIn = true;
 
+            $building->users->add($user);
+
             $this->em->persist($user);
             $this->em->flush();
         }

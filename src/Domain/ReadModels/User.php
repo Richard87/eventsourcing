@@ -30,6 +30,5 @@ class User
         public bool $checkedIn = false,
     )
     {
-        $this->building->users->add($this);
     }
 }
